@@ -1,0 +1,44 @@
+#include <iostream>
+#include <cstdlib>
+#include <chrono>
+#include <algorithm>
+
+// Function to check if the array is sorted
+bool is_sorted(int* arr, int size) {
+    return std::is_sorted(arr, arr + size);
+}
+
+// Function to sort an array with a pre-check for sortedness
+void sort_if_needed(int* arr, int size) {
+    if (!is_sorted(arr, size)) {
+        std::sort(arr, arr + size);
+    }
+}
+
+int main() {
+    const int array_size = 100000;
+    int* arr = new int[array_size];
+
+    // Initialize array with random values
+    std::srand(std::time(nullptr));
+    for (int i = 0; i < array_size; ++i) {
+        arr[i] = std::rand();
+    }
+
+    // Measure time for sorting with pre-check
+    auto start = std::chrono::high_resolution_clock::now();
+    sort_if_needed(arr, array_size);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_with_check = end - start;
+    std::cout << "Time with pre-check: " << time_with_check.count() << " seconds.\n";
+
+    // Now sort an already sorted array
+    start = std::chrono::high_resolution_clock::now();
+    sort_if_needed(arr, array_size);
+    end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_already_sorted = end - start;
+    std::cout << "Time for already sorted array: " << time_already_sorted.count() << " seconds.\n";
+
+    delete[] arr;
+    return 0;
+}
